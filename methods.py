@@ -3,6 +3,7 @@ which I will be using in the main.py file."""
 
 import math
 import numpy as np
+import pandas as pd
 import scipy
 import matplotlib.pyplot as plt
 from files import fitsfile
@@ -43,20 +44,29 @@ class Calculating(object):
         t = Table.read(fitsfile)
         z = t['Z_BEST']
         d_L = cosmo.luminosity_distance(z)
-        print(d_L)
+        lum_dist_list = []  # will make a list of each D_L(z)
+        for zj in t['Z_BEST']:  # for each redshift, find their luminosity distance
+            lum_dist_list.append(d_L(zj))  # each value of D_L for each corresponding z
+
+        t['Lum_Dist'] = lum_dist_list #enters the results into the FITS file as a new column
 
     def calc_Luminosity(self, fitsfile):
 
         t = Table.read(fitsfile)
         z = t['Z_BEST']
         d_L = cosmo.luminosity_distance(z)
+        lum_dist_list = [] #will make a list of each D_L(z)
+
+        for zj in t['Z_BEST']: #for each redshift, find their luminosity distance
+            lum_dist_list.append(d_L(zj)) #each value of D_L for each corresponding z
+
         Flux_144MHz = t['Total_flux'] #Total flux observed in the 144MHz radio band
         alpha = -0.7 #slope of the radio spectrum in Lum-freq log-log space
 
         Lum_144MHz = Flux_144MHz * 4*math.pi * (d_L)**2 *(1+z)**(1+alpha)
         Lum_1400MHz = Lum_144MHz * (0.102857)**alpha #the float is equal to 144/1400
 
-        return Lum_1400MHz
+        t['Lum_1400MHz'] = Lum_1400MHz # this is a list of values for each redshift Z_BEST
 
 """Want a class that can plot graphs of Things vs. z"""
 
@@ -64,7 +74,7 @@ class Plotting(object):
     def __init__(self):
         null = "null"
 
-    def plot_Luminosity(self, z, fitsfile):
+    def plot_Luminosity(self, fitsfile):
 
         Lum_1400MHz = Calculating.calc_Luminosity(fitsfile)
         z = np.linspace(0.01,7.01,100)
