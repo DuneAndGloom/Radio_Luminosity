@@ -26,6 +26,9 @@ coco = Reading() #example of simplifying names
 calc = Calculating()
 plot = Plotting()
 
-#calc.calc_lum_dist(fitsfile)
+calc.calc_lum_dist(fitsfile)
 #calc.calc_Luminosity(fitsfile)
-plot.plot_Luminosity(fitsfile)
+#plot.plot_Luminosity(fitsfile)
+#coco.read_z(fitsfile)
+#coco.exclude_null_z(fitsfile)
+
